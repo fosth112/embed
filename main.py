@@ -4,7 +4,7 @@ import asyncio
 import os
 from myserver import server_on
 
-GUILD_ID = 1315950507130355813
+GUILD_ID = 923167904629928005
 
 intents = discord.Intents.default()
 intents.members = True
@@ -65,7 +65,7 @@ async def dm_embed(ctx):
             await member.send("🔗 Discord: https://discord.gg/XyjyUnxPDw")
             success += 1
             print(f"✅ ส่งข้อความให้ {member}")
-            await asyncio.sleep(6)  # sleep กัน rate limit
+            await asyncio.sleep(20)  # sleep กัน rate limit
         except discord.Forbidden:
             failed += 1
             print(f"❌ ไม่สามารถส่งข้อความให้ {member} (ปิด DM)")
