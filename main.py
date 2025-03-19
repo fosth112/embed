@@ -2,9 +2,11 @@ import discord
 from discord.ext import commands
 import asyncio
 import os
+import random
 from myserver import server_on
 
 GUILD_ID = 923167904629928005
+RATE_LIMIT_DELAY = (30, 60)  # ส่งข้อความแบบสุ่มระหว่าง 30-60 วินาที เพื่อลดความเสี่ยงโดนแบน
 
 intents = discord.Intents.default()
 intents.members = True
@@ -55,17 +57,18 @@ async def dm_embed(ctx):
     ).set_image(url="https://i.postimg.cc/KvzK8cYj/Annotation-2025-03-16-010045.png")
 
     success, failed = 0, 0
+    members = [m for m in guild.members if not m.bot and m.dm_channel]
+    random.shuffle(members)  # สุ่มลำดับรายชื่อ เพื่อให้ส่งแบบกระจายตัวมากขึ้น
 
-    for member in guild.members:
-        if member.bot:
-            continue
-
+    for member in members:
         try:
+            if member.dm_channel is None:
+                await member.create_dm()
             await member.send(embeds=[embed1, embed2])
             await member.send("🔗 Discord: https://discord.gg/XyjyUnxPDw")
             success += 1
             print(f"✅ ส่งข้อความให้ {member}")
-            await asyncio.sleep(20)  # sleep กัน rate limit
+            await asyncio.sleep(random.randint(*RATE_LIMIT_DELAY))  # Sleep แบบสุ่ม
         except discord.Forbidden:
             failed += 1
             print(f"❌ ไม่สามารถส่งข้อความให้ {member} (ปิด DM)")
